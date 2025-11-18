@@ -120,9 +120,9 @@ O design é totalmente responsivo e funciona em notebooks, tablets e celulares.
   "inclinacao": 12.4,
   "postura": false
 }
+```
 
 ---
-
 
 <h2>❤️ Agradecimentos</h2>
 
