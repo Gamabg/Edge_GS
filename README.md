@@ -1,6 +1,3 @@
-# Edge_GS
-Repositório destinado a GS de Edge Computing
-
 <h1 align="center">📊 SmartWorkSense – Monitoramento Inteligente de Ambiente e Postura</h1>
 
 <p align="center">
