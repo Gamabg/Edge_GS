@@ -27,10 +27,6 @@ Os dados são enviados via **MQTT** para um servidor que distribui os valores pa
   <img src="./Foto_Circuito.png" width="65%">
 </p>
 
-<p align="center">
-  <img src="./arqsistema.png" width="95%">
-</p>
-
 
 **Componentes principais:**
 
