@@ -1,0 +1,162 @@
+/* SmartWorkSense – Versao sem LED RGB (Wokwi / ESP32)
+   - OLED atualizado a cada 300 ms
+   - Logs no Serial detalhados
+*/
+
+#include <Wire.h>
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_GFX.h>
+#include <MPU6050_light.h>
+
+/* === WIFI === */
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+
+/* === MQTT === */
+const char* mqttServer = "44.223.43.74";
+const int mqttPort = 1883;
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+/* === OLED === */
+Adafruit_SSD1306 display(128, 64, &Wire, -1);
+
+/* === SENSORES === */
+MPU6050 mpu(Wire);
+#define LDR_PIN 34
+
+/* === TIMERS === */
+unsigned long lastMQTT = 0;
+unsigned long lastOLED = 0;
+unsigned long lastDebug = 0;
+
+/* === MQTT RECONNECT === */
+void reconnectMQTT() {
+  Serial.println("[MQTT] Tentando reconectar...");
+  int tries = 0;
+  while (!client.connected() && tries < 6) {
+    if (client.connect("SmartWorkSense123")) {
+      Serial.println("[MQTT] Conectado!");
+      break;
+    }
+    Serial.println("[MQTT] Falhou, tentando novamente...");
+    tries++;
+    delay(200);
+  }
+  if (!client.connected()) {
+    Serial.println("[MQTT] Nao conectado ao broker (ignorar por enquanto).");
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(10);
+  Serial.println("\n=== SmartWorkSense - Debug Mode ===");
+
+  Wire.begin(21, 22);
+
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println("[ERRO] OLED NAO ENCONTRADO!");
+    while (true) { delay(1000); }
+  }
+
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println("Iniciando...");
+  display.display();
+
+  bool ok = mpu.begin();
+  if (!ok) Serial.println("[MPU] Erro!");
+  else Serial.println("[MPU] OK.");
+
+  mpu.setAccOffsets(0,0,0);
+  mpu.setGyroOffsets(0,0,0);
+
+  pinMode(LDR_PIN, INPUT);
+
+  WiFi.begin(ssid, password);
+  unsigned long startAttempt = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - startAttempt < 8000) {
+    Serial.print(".");
+    delay(300);
+  }
+  Serial.println();
+
+  client.setServer(mqttServer, mqttPort);
+
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.println("Sistema Iniciado!");
+  display.display();
+  delay(500);
+}
+
+void loop() {
+  if (!client.connected()) reconnectMQTT();
+  client.loop();
+
+  mpu.update();
+
+  float TempMPU = mpu.getTemp();
+  float inclinacao = abs(mpu.getAngleX());
+  int lux = analogRead(LDR_PIN);
+
+  bool posturaRuim = inclinacao > 25;
+  bool alertaLux = lux < 200;
+  bool alertaTemp = TempMPU > 33;
+
+  /* === LOG NO SERIAL === */
+  if (millis() - lastDebug >= 300) {
+    lastDebug = millis();
+    Serial.println("\n--- Telemetria ---");
+    Serial.print("Temp: "); Serial.println(TempMPU);
+    Serial.print("Lux: "); Serial.println(lux);
+    Serial.print("Inclinacao: "); Serial.println(inclinacao);
+    Serial.print("Postura Ruim: "); Serial.println(posturaRuim ? "SIM" : "NAO");
+  }
+
+  /* === MQTT A CADA 100ms === */
+  if (millis() - lastMQTT >= 100) {
+    lastMQTT = millis();
+
+    String payload =
+      String("{\"temp\":") + TempMPU +
+      ",\"lux\":" + lux +
+      ",\"inclinacao\":" + inclinacao +
+      ",\"postura\":" + (posturaRuim ? "true" : "false") +
+      "}";
+
+    if (client.connected()) {
+      client.publish("smartworksense/dados", payload.c_str());
+      client.publish("smartworksense/alerta", posturaRuim || alertaLux || alertaTemp ? "1" : "0");
+      Serial.println("[MQTT] Payload publicado.");
+    } else {
+      Serial.println("[MQTT] Broker nao conectado.");
+    }
+  }
+
+  /* === OLED === */
+  if (millis() - lastOLED >= 300) {
+    lastOLED = millis();
+
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.print("Temp: "); display.println(TempMPU);
+
+    display.setCursor(0, 10);
+    display.print("Lux: "); display.println(lux);
+
+    display.setCursor(0, 20);
+    display.print("Incl: "); display.println(inclinacao);
+
+    display.setCursor(0, 35);
+    display.println(posturaRuim ? "POSTURA RUIM!" : "Postura OK");
+
+    display.display();
+  }
+}
