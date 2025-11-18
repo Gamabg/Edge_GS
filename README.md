@@ -24,7 +24,7 @@ Os dados são enviados via **MQTT** para um servidor que distribui os valores pa
 <h2>🔌 Arquitetura Geral</h2>
 
 <p align="center">
-  <img src="IMAGEM_DO_CIRCUITO.png" width="65%">
+  <img src="./Foto_Circuito.png.png" width="65%">
 </p>
 
 **Componentes principais:**
@@ -53,7 +53,7 @@ Os dados são enviados via **MQTT** para um servidor que distribui os valores pa
 <h2>📷 Dashboard</h2>
 
 <p align="center">
-  <img src="IMAGEM_DASHBOARD.png" width="95%">
+  <img src="./Foto_Dashboard.png" width="95%">
 </p>
 
 O painel mostra:
