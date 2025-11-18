@@ -27,6 +27,11 @@ Os dados são enviados via **MQTT** para um servidor que distribui os valores pa
   <img src="./Foto_Circuito.png" width="65%">
 </p>
 
+<p align="center">
+  <img src="./arqsistema.png" width="95%">
+</p>
+
+
 **Componentes principais:**
 
 | Componente | Função |
@@ -119,3 +124,13 @@ O design é totalmente responsivo e funciona em notebooks, tablets e celulares.
   "inclinacao": 12.4,
   "postura": false
 }
+
+
+<h2>❤️ Agradecimentos</h2>
+
+<p align="center">
+  Projeto desenvolvido por <b>Bruno Gama e Kauai Rosa</b><br>
+  <i>Projeto acadêmico de IoT e Automação Esportiva</i><br><br>
+  Agradecemos seu interesse em recriar e aprimorar este sistema! 👋<br>
+  <i>Sinta-se à vontade para expandir o projeto com novos sensores e recursos.</i>
+</p>
