@@ -27,6 +27,9 @@ Os dados são enviados via **MQTT** para um servidor que distribui os valores pa
   <img src="./Foto_Circuito.png" width="65%">
 </p>
 
+<p align="center">
+  👉 <a href="https://wokwi.com/projects/447976550709220353" target="_blank"><b>🔗 Clique aqui para acessar a simulação completa no Wokwi</b></a>
+</p>
 
 **Componentes principais:**
 
