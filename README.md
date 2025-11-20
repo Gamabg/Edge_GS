@@ -19,6 +19,10 @@ Ele monitora em tempo real:
 
 Os dados são enviados via **MQTT** para um servidor que distribui os valores para um **dashboard ao vivo** utilizando **Socket.IO** e gráficos dinâmicos.
 
+<p align="center">
+  👉 <a href="https://wokwi.com/projects/447976550709220353" target="_blank"><b>🔗 Clique aqui para acessar o video com explicação completa no Youtube.</b></a>
+</p>
+
 ---
 
 <h2>🔌 Arquitetura Geral</h2>
